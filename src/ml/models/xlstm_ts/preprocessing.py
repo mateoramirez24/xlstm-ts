@@ -59,8 +59,8 @@ def _split_data(x, y, dates, set, train_end_date, val_end_date):
         raise ValueError("Invalid set name. Must be 'train', 'val', or 'test'.")
 
     # Move data to GPU
-    x_splitted = x[mask].to('cuda')
-    y_splitted = y[mask].to('cuda')
+    x_splitted = x[mask].to('cpu')
+    y_splitted = y[mask].to('cpu')
 
     print(f"{set} X shape: {x_splitted.shape}")
     print(f"{set} y shape: {y_splitted.shape}")
