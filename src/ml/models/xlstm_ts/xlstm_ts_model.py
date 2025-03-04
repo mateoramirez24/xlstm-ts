@@ -11,6 +11,7 @@
 # -------------------------------------------------------------------------------------------
 
 import torch.nn as nn
+import torch
 from xlstm import (
     xLSTMBlockStack,
     xLSTMBlockStackConfig,
@@ -42,7 +43,7 @@ def create_xlstm_model(seq_length):
         ),
         slstm_block=sLSTMBlockConfig(
             slstm=sLSTMLayerConfig(
-                backend="cuda",
+                backend="vanilla",
                 num_heads=2,  # Reduced number of heads to save memory
                 conv1d_kernel_size=2,  # Reduced kernel size to save memory
                 bias_init="powerlaw_blockdependent",
@@ -56,13 +57,13 @@ def create_xlstm_model(seq_length):
     )
 
     # Instantiate the xLSTM stack
-    xlstm_stack = xLSTMBlockStack(cfg).to("cuda")
+    xlstm_stack = xLSTMBlockStack(cfg).to("cpu")
 
     # Add a linear layer to project input data to the required embedding dimension
-    input_projection = nn.Linear(input_size, embedding_dim).to("cuda")
+    input_projection = nn.Linear(input_size, embedding_dim).to("cpu")
 
     # Add a final linear layer to project the xLSTM output to the desired output size
-    output_projection = nn.Linear(embedding_dim, output_size).to("cuda")
+    output_projection = nn.Linear(embedding_dim, output_size).to("cpu")
 
     return xlstm_stack, input_projection, output_projection
 
@@ -82,12 +83,13 @@ class ModelWrapper(nn.Module):
         x = self.input_projection(x)
         x = self.xlstm_stack(x)
         x = self.output_projection(x[:, -1, :])
+        x = torch.sigmoid(x)
         return x
     
 def plot_architecture_xlstm():
     xlstm_stack, input_projection, output_projection = create_xlstm_model(SEQ_LENGTH_XLSTM)
 
-    model = ModelWrapper(input_projection, xlstm_stack, output_projection).cuda()
+    model = ModelWrapper(input_projection, xlstm_stack, output_projection).to("cpu")
 
     batch_size = 16
     real_input_dimensions = (batch_size, SEQ_LENGTH_XLSTM, 1)

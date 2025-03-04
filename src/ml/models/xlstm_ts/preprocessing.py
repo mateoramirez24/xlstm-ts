@@ -36,6 +36,30 @@ def create_sequences(data, dates):
 
     X = np.array(xs)
     y = np.array(ys)
+    y = np.where(y > 0, 1, 0) #Esto es solo porque estoy tomando el open to close nada más.
+    dates = pd.Series(date_list)
+
+    # Convert to PyTorch tensors
+    X = torch.from_numpy(X).float()
+    y = torch.from_numpy(y).float()
+
+    return X, y, dates
+
+def create_sequences_interc(open_prices, close_prices, dates):
+    data = np.column_stack((close_prices, open_prices)).flatten()  # Intercala Open, Close
+    xs, ys, date_list = [], [], []
+
+    for i in range(len(open_prices) - SEQ_LENGTH_XLSTM):  # -2 porque predice el siguiente close
+        x = data[i:i + SEQ_LENGTH_XLSTM*2]
+        y = data[i + SEQ_LENGTH_XLSTM*2]
+        date = dates[i + SEQ_LENGTH_XLSTM*2]
+        xs.append(x)
+        ys.append(y)
+        date_list.append(date)
+
+    X = np.array(xs)
+    y = np.array(ys)
+    y = np.where(y > 0, 1, 0) #Esto es solo porque estoy tomando el open to close nada más.
     dates = pd.Series(date_list)
 
     # Convert to PyTorch tensors
@@ -59,8 +83,8 @@ def _split_data(x, y, dates, set, train_end_date, val_end_date):
         raise ValueError("Invalid set name. Must be 'train', 'val', or 'test'.")
 
     # Move data to GPU
-    x_splitted = x[mask].to('cuda')
-    y_splitted = y[mask].to('cuda')
+    x_splitted = x[mask].to('cpu')
+    y_splitted = y[mask].to('cpu')
 
     print(f"{set} X shape: {x_splitted.shape}")
     print(f"{set} y shape: {y_splitted.shape}")

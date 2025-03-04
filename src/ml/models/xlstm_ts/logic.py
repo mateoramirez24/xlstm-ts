@@ -21,45 +21,25 @@ def run_xlstm_ts(train_x, train_y, val_x, val_y, test_x, test_y, scaler, stock, 
     test_predictions = evaluate_model(xlstm_stack, input_projection, output_projection, test_x)
 
     # Invert the normalisation for comparison
-    test_predictions = inverse_normalise_data_xlstm(test_predictions.squeeze(), scaler)
+    binary_test_predictions = (test_predictions >= 0.5).float()
 
     # If the original data is provided, use it for the evaluation
     if train_y_original is not None and val_y_original is not None and test_y_original is not None:
         train_y = train_y_original
         val_y = val_y_original
         test_y = test_y_original
-    
-    test_y = inverse_normalise_data_xlstm(test_y, scaler)
+
 
     model_name = 'xLSTM-TS'
-    metrics_price = calculate_metrics(test_y, test_predictions, model_name, data_type)
-
-    visualise(test_y, test_predictions, stock, model_name, data_type, show_complete=True, dates=test_dates)
-    visualise(test_y, test_predictions, stock, model_name, data_type, show_complete=False, dates=test_dates)
 
     train_predictions = evaluate_model(xlstm_stack, input_projection, output_projection, train_x)
     val_predictions = evaluate_model(xlstm_stack, input_projection, output_projection, val_x)
 
-    # Invert the normalisation for comparison
-    train_predictions = inverse_normalise_data_xlstm(train_predictions.squeeze(), scaler)
-    train_y = inverse_normalise_data_xlstm(train_y, scaler)
+    binary_train_predictions = (train_predictions >= 0.5).float()
+    binary_val_predictions = (val_predictions >= 0.5).float()
 
-    val_predictions = inverse_normalise_data_xlstm(val_predictions.squeeze(), scaler)
-    val_y = inverse_normalise_data_xlstm(val_y, scaler)
+    accur_train = (binary_train_predictions == train_y).float().mean()
+    accur_val = (binary_val_predictions == val_y).float().mean()
+    accur_test = (binary_test_predictions == test_y).float().mean()
 
-    true_labels, predicted_labels, metrics_direction = evaluate_directional_movement(train_y, train_predictions, val_y, val_predictions, test_y, test_predictions, model_name, data_type, using_darts=False)
-
-    metrics_price.update(metrics_direction)
-
-    # Combine data into a DataFrame
-    data = {
-        'Date': test_dates.tolist()[:-1],
-        'Close': [item for sublist in test_y for item in sublist][:-1],
-        'Predicted Value': [item for sublist in test_predictions for item in sublist][:-1],
-        'True Label': true_labels.tolist(),
-        'Predicted Label': predicted_labels.tolist()
-    }
-
-    results_df = pd.DataFrame(data)
-
-    return results_df, metrics_price
+    return accur_train, accur_val, accur_test

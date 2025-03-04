@@ -22,7 +22,7 @@ def create_dataloader(x, y, batch_size, shuffle=True):
 def train_model(xlstm_stack, input_projection, output_projection, train_x, train_y, val_x, val_y):
     # Hyperparameters
     learning_rate = 0.0001
-    num_epochs = 200
+    num_epochs = 200 #200
     batch_size = 16  # Reduced batch size to save memory
 
     best_val_loss = float('inf')
@@ -34,7 +34,7 @@ def train_model(xlstm_stack, input_projection, output_projection, train_x, train
     val_loader = create_dataloader(val_x, val_y, batch_size, shuffle=False)
 
     # Define the loss function and optimiser
-    criterion = nn.MSELoss()  # Mean Squared Error Loss
+    criterion = nn.BCELoss()  # Classification Loss
     optimiser = optim.Adam(list(xlstm_stack.parameters()) + list(input_projection.parameters()) + list(output_projection.parameters()), lr=learning_rate)
     scheduler = ReduceLROnPlateau(optimiser, mode='min', factor=0.5, patience=10)  # Learning rate scheduler
 
@@ -50,6 +50,7 @@ def train_model(xlstm_stack, input_projection, output_projection, train_x, train
             projected_input_data = input_projection(batch_x)
             xlstm_output = xlstm_stack(projected_input_data)
             predictions = output_projection(xlstm_output[:, -1, :])  # Use the last time step's output
+            predictions = torch.sigmoid(predictions)
 
             # Ensure the shapes match
             predictions = predictions.squeeze()
@@ -72,6 +73,7 @@ def train_model(xlstm_stack, input_projection, output_projection, train_x, train
                 projected_input_data = input_projection(batch_x)
                 xlstm_output = xlstm_stack(projected_input_data)
                 predictions = output_projection(xlstm_output[:, -1, :])  # Use the last time step's output
+                predictions = torch.sigmoid(predictions)
 
                 predictions = predictions.squeeze()
                 batch_y = batch_y.squeeze()
@@ -117,5 +119,6 @@ def evaluate_model(xlstm_stack, input_projection, output_projection, test_x):
         projected_input_data = input_projection(test_x)
         xlstm_output = xlstm_stack(projected_input_data)
         test_predictions = output_projection(xlstm_output[:, -1, :])  # Use the last time step's output
+        test_predictions = torch.sigmoid(test_predictions)
 
     return test_predictions
