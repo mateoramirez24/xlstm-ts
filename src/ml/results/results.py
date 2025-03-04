@@ -22,40 +22,6 @@ def display_metrics(metrics_accumulator, metrics_accumulator_denoised):
     cols.insert(0, cols.pop(cols.index(DATA_TYPE_COLNAME)))
     combined_df = combined_df[cols]
 
-    # Separate the data for plotting
-    original_df = combined_df[combined_df[DATA_TYPE_COLNAME] == 0]
-    denoised_df = combined_df[combined_df[DATA_TYPE_COLNAME] == 1]
-
-    # Create bar charts for RMSSE and 'Direction Accuracy'
-    _, axes = plt.subplots(nrows=1, ncols=2, figsize=(15, 6))
-
-    bar_width = 0.35
-    index = range(len(original_df))
-
-    metric_chosen = 'RMSSE'
-
-    if metric_chosen in combined_df.columns:
-        axes[0].bar(index, original_df[metric_chosen], bar_width, label='Original Data', color='blue')
-        axes[0].bar([i + bar_width for i in index], denoised_df[metric_chosen], bar_width, label='Denoised Data', color='orange')
-        axes[0].set_xlabel('Models')
-        axes[0].set_ylabel(f'{metric_chosen} value')
-        axes[0].set_title(f'{metric_chosen} for Models')
-        axes[0].set_xticks([i + bar_width / 2 for i in index])
-        axes[0].set_xticklabels(original_df.index, rotation=45, ha="right")
-        axes[0].legend()
-
-    axes[1].bar(index, original_df['Test Accuracy'], bar_width, label='Original Data', color='blue')
-    axes[1].bar([i + bar_width for i in index], denoised_df['Test Accuracy'], bar_width, label='Denoised Data', color='orange')
-    axes[1].set_xlabel('Models')
-    axes[1].set_ylabel('Direction Accuracy (%)')
-    axes[1].set_title('Direction Accuracy for Models')
-    axes[1].set_xticks([i + bar_width / 2 for i in index])
-    axes[1].set_xticklabels(original_df.index, rotation=45, ha="right")
-    axes[1].legend()
-
-    plt.tight_layout()
-    plt.show()
-
     return combined_df
 
 # Function to add percentage signs to appropriate columns

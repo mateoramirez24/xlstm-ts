@@ -44,32 +44,33 @@ def wavelet_denoising(data, wavelet='db4', level=1):
 
 def plot_wavelet_denoising(df, stock):
     # Print some metrics for verification
-    snr = 10 * np.log10(np.sum(df['Close_denoised'] ** 2) / np.sum(df['Noise'] ** 2))
-    print(f"Signal-to-Noise Ratio (SNR): {snr:.2f} dB")
+    for asset in ['Open', 'Close']:
+        snr = 10 * np.log10(np.sum(df[f'{asset}_denoised'] ** 2) / np.sum(df[f'Noise_{asset}'] ** 2))
+        print(f"Signal-to-Noise Ratio (SNR): {snr:.2f} dB")
 
-    # Plotting the results
-    fig, axes = plt.subplots(nrows=3, ncols=1, figsize=(10, 7))
-    loc = 'upper left'
+        # Plotting the results
+        fig, axes = plt.subplots(nrows=3, ncols=1, figsize=(10, 7))
+        loc = 'upper left'
 
-    # Plot Original Signal
-    axes[0].plot(df.index, df['Close'], label='Original Signal', color='blue')
-    axes[0].legend(loc=loc)
-    axes[0].grid(False)  # Disable grid
+        # Plot Original Signal
+        axes[0].plot(df.index, df[f'{asset}'], label='Original Signal', color='blue')
+        axes[0].legend(loc=loc)
+        axes[0].grid(False)  # Disable grid
 
-    # Plot Denoised Signal
-    axes[1].plot(df.index, df['Close_denoised'], label='Denoised Signal', color='green')
-    axes[1].legend(loc=loc)
-    axes[1].grid(False)  # Disable grid
+        # Plot Denoised Signal
+        axes[1].plot(df.index, df[f'{asset}_denoised'], label='Denoised Signal', color='green')
+        axes[1].legend(loc=loc)
+        axes[1].grid(False)  # Disable grid
 
-    # Plot Noise
-    axes[2].plot(df.index, df['Noise'], label='Extracted Noise', color='red')
-    axes[2].legend(loc=loc)
-    axes[2].grid(False)  # Disable grid
+        # Plot Noise
+        axes[2].plot(df.index, df[f'Noise_{asset}'], label='Extracted Noise', color='red')
+        axes[2].legend(loc=loc)
+        axes[2].grid(False)  # Disable grid
 
-    fig.suptitle(f"Wavelet Denoising for {stock}", fontsize=16)
+        fig.suptitle(f"Wavelet Denoising for {stock}", fontsize=16)
 
-    plt.tight_layout() 
-    plt.show()
+        plt.tight_layout() 
+        plt.show()
 
 # -------------------------------------------------------------------------------------------
 # Process dates

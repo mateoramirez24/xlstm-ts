@@ -72,6 +72,6 @@ def split_train_val_test_xlstm(x, y, dates, train_end_date, val_end_date, scaler
     val_x, val_y, val_dates = _split_data(x, y, dates, 'val', train_end_date, val_end_date)
     test_x, test_y, test_dates = _split_data(x, y, dates, 'test', train_end_date, val_end_date)
 
-    plot_data_split(train_dates.to_numpy(), inverse_normalise_data_xlstm(train_y, scaler), val_dates.to_numpy(), inverse_normalise_data_xlstm(val_y, scaler), test_dates.to_numpy(), inverse_normalise_data_xlstm(test_y, scaler), stock)
+    plot_data_split(train_dates.to_numpy(), inverse_normalise_data_xlstm(train_y[:, 0], scaler), val_dates.to_numpy(), inverse_normalise_data_xlstm(val_y[:, 0], scaler), test_dates.to_numpy(), inverse_normalise_data_xlstm(test_y[:, 0], scaler), stock)
 
     return train_x, train_y, train_dates, val_x, val_y, val_dates, test_x, test_y, test_dates

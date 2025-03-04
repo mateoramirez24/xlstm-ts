@@ -29,9 +29,9 @@ from torchinfo import summary
 
 def create_xlstm_model(seq_length):
     # Define your input size, hidden size, and other relevant parameters
-    input_size = 1  # Number of features in your time series
+    input_size = 2  # Number of features in your time series
     embedding_dim = 64  # Dimension of the embeddings, reduced to save memory
-    output_size = 1  # Number of output features (predicting the next value)
+    output_size = 2  # Number of output features (predicting the next value)
 
     # Define the xLSTM configuration
     cfg = xLSTMBlockStackConfig(
@@ -90,7 +90,7 @@ def plot_architecture_xlstm():
     model = ModelWrapper(input_projection, xlstm_stack, output_projection).to("cpu")
 
     batch_size = 16
-    real_input_dimensions = (batch_size, SEQ_LENGTH_XLSTM, 1)
+    real_input_dimensions = (batch_size, SEQ_LENGTH_XLSTM, 2)
 
     # Generate the summary with actual input dimensions
     summary(model, input_size=real_input_dimensions)
