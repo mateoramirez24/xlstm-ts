@@ -29,6 +29,9 @@ def calculate_directions(data):
                 directional_data[i, j] = [1, 0]  # Down
 
     """
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     directions = np.diff(data.squeeze())
     directional_data = np.zeros((directions.size, 2))
@@ -99,6 +102,70 @@ def calculate_movement_metrics(true_labels, predicted_labels, model_name, set_ty
             plt.ylabel('True')
             plt.title(f'{model_name} Confusion Matrix ({data_type} Data - {feature})')
             plt.show()
+<<<<<<< Updated upstream
+=======
+    """
+
+    if set_type == "Train":
+        # Calculate only accuracy for the training set
+        accuracy = accuracy_score(true_labels, predicted_labels) * 100
+        print(f'{model_name} ({data_type}) | Train Accuracy: {accuracy:.2f}%')
+
+        return {'Train Accuracy': accuracy}
+
+    if set_type == "Val":
+        # Calculate only accuracy for the validation set
+        accuracy = accuracy_score(true_labels, predicted_labels) * 100
+        print(f'{model_name} ({data_type}) | Validation Accuracy: {accuracy:.2f}%')
+
+        return {'Validation Accuracy': accuracy}
+
+    elif set_type == "Test":
+        # Calculate metrics for the test set
+        accuracy = accuracy_score(true_labels, predicted_labels) * 100
+        recall = recall_score(true_labels, predicted_labels, pos_label=1) * 100
+        precision_rise = precision_score(true_labels, predicted_labels, pos_label=1) * 100
+        precision_fall = precision_score(true_labels, predicted_labels, pos_label=0) * 100
+        f1 = f1_score(true_labels, predicted_labels, pos_label=1) * 100
+
+        print(f'{model_name} ({data_type}) | Test Accuracy: {accuracy:.2f}%')
+        print(f'{model_name} ({data_type}) | Recall: {recall:.2f}%')
+        print(f'{model_name} ({data_type}) | Precision (Rise): {precision_rise:.2f}%')
+        print(f'{model_name} ({data_type}) | Precision (Fall): {precision_fall:.2f}%')
+        print(f'{model_name} ({data_type}) | F1 Score: {f1:.2f}%')
+
+        # Confusion matrix
+        cm = confusion_matrix(true_labels, predicted_labels)
+        cm_norm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+
+        plt.figure(figsize=(10, 7))
+        sns.heatmap(cm, annot=True, fmt="d", cmap=plt.cm.Blues, xticklabels=["Down", "Up"], yticklabels=["Down", "Up"], cbar=False)
+
+        # Add percentages
+        for i in range(cm.shape[0]):
+            for j in range(cm.shape[1]):
+                plt.text(j + 0.5, i + 0.55, f'\n({cm_norm[i, j]:.2%})',
+                            horizontalalignment='center',
+                            verticalalignment='center',
+                            color='black',
+                            fontsize=9)
+
+        plt.xlabel('Predicted')
+        plt.ylabel('True')
+        plt.title(f'{model_name} Confusion Matrix ({data_type} Data)')
+        plt.show()
+
+        return {
+            'Test Accuracy': accuracy,
+            'Recall': recall,
+            'Precision (Rise)': precision_rise,
+            'Precision (Fall)': precision_fall,
+            'F1 Score': f1
+        }
+
+
+def evaluate_directional_movement(actual_train, pred_train, actual_val, pred_val, actual_test, pred_test, model_name, data_type, using_darts=True):
+>>>>>>> Stashed changes
     """
 
     if set_type == "Train":
@@ -190,6 +257,7 @@ def evaluate_directional_movement(actual_values_train, backtest_train, actual_va
     # Calculate directions for training set
     true_directions_train = calculate_directions(train_y)
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     predicted_directions_train = calculate_directions(train_predictions)
 
     # Convert to class labels for training set
@@ -198,6 +266,8 @@ def evaluate_directional_movement(actual_values_train, backtest_train, actual_va
 
     # Calculate directions for validation set
 =======
+=======
+>>>>>>> Stashed changes
     if len(train_y) != len(true_directions_train):
         print(len(train_y), len(true_directions_train))
         print("aca esta agregando una creo")
@@ -221,6 +291,49 @@ def evaluate_directional_movement(actual_values_train, backtest_train, actual_va
     predicted_labels_test = np.argmax(predicted_directions_test, axis=1)
 =======
     # Convertir a etiquetas (0=Down, 1=Up) para cada feature
+<<<<<<< Updated upstream
+=======
+
+    #para 2D es con axis =2
+    true_labels_train = np.argmax(true_directions_train, axis=1)
+    predicted_labels_train = np.argmax(pred_directions_train, axis=1)
+    true_labels_val = np.argmax(true_directions_val, axis=1)
+    predicted_labels_val = np.argmax(pred_directions_val, axis=1)
+    true_labels_test = np.argmax(true_directions_test, axis=1)
+    predicted_labels_test = np.argmax(pred_directions_test, axis=1)
+
+    # Crear listas de datos concatenando train, val y test
+    #Para 2D
+    #open_values = [y[0] for y in true_labels_train] + [y[0] for y in true_labels_val] + [y[0] for y in true_labels_test]
+    #close_values = [y[1] for y in true_labels_train] + [y[1] for y in true_labels_val] + [y[1] for y in true_labels_test]
+    close_values = [y for y in true_labels_train] + [y for y in true_labels_val] + [y for y in true_labels_test]
+
+    #open_pred_values = [y[0] for y in predicted_labels_train] + [y[0] for y in predicted_labels_val] + [y[0] for y in predicted_labels_test]
+    #close_pred_values = [y[1] for y in predicted_labels_train] + [y[1] for y in predicted_labels_val] + [y[1] for y in predicted_labels_test]
+    close_pred_values = [y for y in predicted_labels_train] + [y for y in predicted_labels_val] + [y for y in predicted_labels_test]
+
+    # Crear la columna de conjunto (Train, Val, Test)
+    sets = (["Train"] * len(true_labels_train) + 
+            ["Val"] * len(true_labels_val) + 
+            ["Test"] * len(true_labels_test))
+
+    # Crear DataFrame
+    """
+    Para 2D
+    df = pd.DataFrame({
+        "Set": sets,
+        "Open": open_values,
+        "Close": close_values,
+        "Open_pred": open_pred_values,
+        "Close_pred": close_pred_values
+    })
+    """
+    df = pd.DataFrame({
+        "Set": sets,
+        "Close": close_values,
+        "Close_pred": close_pred_values
+    })
+>>>>>>> Stashed changes
 
     #para 2D es con axis =2
     true_labels_train = np.argmax(true_directions_train, axis=1)
