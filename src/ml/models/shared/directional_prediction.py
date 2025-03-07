@@ -30,6 +30,9 @@ def calculate_directions(data):
 
     """
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -103,7 +106,10 @@ def calculate_movement_metrics(true_labels, predicted_labels, model_name, set_ty
             plt.title(f'{model_name} Confusion Matrix ({data_type} Data - {feature})')
             plt.show()
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
     """
 
     if set_type == "Train":
@@ -258,6 +264,7 @@ def evaluate_directional_movement(actual_values_train, backtest_train, actual_va
     true_directions_train = calculate_directions(train_y)
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     predicted_directions_train = calculate_directions(train_predictions)
 
     # Convert to class labels for training set
@@ -266,6 +273,8 @@ def evaluate_directional_movement(actual_values_train, backtest_train, actual_va
 
     # Calculate directions for validation set
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     if len(train_y) != len(true_directions_train):
@@ -292,7 +301,50 @@ def evaluate_directional_movement(actual_values_train, backtest_train, actual_va
 =======
     # Convertir a etiquetas (0=Down, 1=Up) para cada feature
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+
+    #para 2D es con axis =2
+    true_labels_train = np.argmax(true_directions_train, axis=1)
+    predicted_labels_train = np.argmax(pred_directions_train, axis=1)
+    true_labels_val = np.argmax(true_directions_val, axis=1)
+    predicted_labels_val = np.argmax(pred_directions_val, axis=1)
+    true_labels_test = np.argmax(true_directions_test, axis=1)
+    predicted_labels_test = np.argmax(pred_directions_test, axis=1)
+
+    # Crear listas de datos concatenando train, val y test
+    #Para 2D
+    #open_values = [y[0] for y in true_labels_train] + [y[0] for y in true_labels_val] + [y[0] for y in true_labels_test]
+    #close_values = [y[1] for y in true_labels_train] + [y[1] for y in true_labels_val] + [y[1] for y in true_labels_test]
+    close_values = [y for y in true_labels_train] + [y for y in true_labels_val] + [y for y in true_labels_test]
+
+    #open_pred_values = [y[0] for y in predicted_labels_train] + [y[0] for y in predicted_labels_val] + [y[0] for y in predicted_labels_test]
+    #close_pred_values = [y[1] for y in predicted_labels_train] + [y[1] for y in predicted_labels_val] + [y[1] for y in predicted_labels_test]
+    close_pred_values = [y for y in predicted_labels_train] + [y for y in predicted_labels_val] + [y for y in predicted_labels_test]
+
+    # Crear la columna de conjunto (Train, Val, Test)
+    sets = (["Train"] * len(true_labels_train) + 
+            ["Val"] * len(true_labels_val) + 
+            ["Test"] * len(true_labels_test))
+
+    # Crear DataFrame
+    """
+    Para 2D
+    df = pd.DataFrame({
+        "Set": sets,
+        "Open": open_values,
+        "Close": close_values,
+        "Open_pred": open_pred_values,
+        "Close_pred": close_pred_values
+    })
+    """
+    df = pd.DataFrame({
+        "Set": sets,
+        "Close": close_values,
+        "Close_pred": close_pred_values
+    })
+>>>>>>> Stashed changes
 
     #para 2D es con axis =2
     true_labels_train = np.argmax(true_directions_train, axis=1)

@@ -46,6 +46,7 @@ def run_xlstm_ts(train_x, train_y, val_x, val_y, test_x, test_y, scaler, stock, 
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     val_predictions = inverse_normalise_data_xlstm(val_predictions.squeeze(), scaler)
     val_y = inverse_normalise_data_xlstm(val_y, scaler)
 
@@ -120,6 +121,8 @@ def run_xlstm_ts_1out(train_x, train_y, val_x, val_y, test_x, test_y, scaler, st
 
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     true_labels, predicted_labels, metrics_direction, predictions_df = evaluate_directional_movement(train_y, train_predictions, val_y, val_predictions, test_y, test_predictions, model_name, data_type, using_darts=False)
 
     metrics_price.update(metrics_direction)
@@ -143,7 +146,10 @@ def run_xlstm_ts_1out(train_x, train_y, val_x, val_y, test_x, test_y, scaler, st
 
     return results_df, metrics_price, predictions_df
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 
 
 def run_xlstm_ts_1out(train_x, train_y, val_x, val_y, test_x, test_y, scaler, stock, data_type, test_dates, train_y_original=None, val_y_original=None, test_y_original=None):
@@ -205,4 +211,7 @@ def run_xlstm_ts_1out(train_x, train_y, val_x, val_y, test_x, test_y, scaler, st
     results_df = pd.DataFrame(data)
 
     return results_df, metrics_price, predictions_df
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
